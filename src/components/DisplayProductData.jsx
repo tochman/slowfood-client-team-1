@@ -19,7 +19,7 @@ class DisplayProductData extends Component {
 
 	async addToOrder(event) {
 		let id = event.target.parentElement.dataset.id
-		let result = await axios.post('http://localhost:3000/api/orders', { params: { id: id } })
+		let result = await axios.post('http://localhost:3000/api/orders', { id: id } )
 		this.setState({message: {id: id, message: result.data.message}})
 	}
 
@@ -31,7 +31,7 @@ class DisplayProductData extends Component {
 					{this.state.productData.map(item => {
 						return (
 							<div key={item.id} id={`product-${item.id}`} data-id={item.id} data-price={item.price}>
-								{item.name}{item.description}{item.price}
+								{`${item.name} ${item.description} ${item.price}`}
 								<button onClick={this.addToOrder.bind(this)}>Add to order</button>
 								{parseInt(this.state.message.id) === item.id &&
 									<p class='message'>{this.state.message.message}</p>
