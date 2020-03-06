@@ -6,7 +6,8 @@ class DisplayProductData extends Component {
 	state = {
 		productData: [],
 		message: {},
-		orderId: ''
+		orderDetails: {},
+		showOrder: false
 	}
 
 	componentDidMount() {
@@ -21,16 +22,16 @@ class DisplayProductData extends Component {
 	async addToOrder(event) {
 		let id = event.target.parentElement.dataset.id
 		let result
-		if (this.state.orderId !== "") {
-			result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderId}`, { product_id: id })
+		if (this.state.orderDetails.hasOwnProperty('id')) {
+			result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderDetails.id}`, { product_id: id })
 		} else {
-			result = await axios.post('http://localhost:3000/api/orders', { product_id: id } )
+			result = await axios.post('http://localhost:3000/api/orders', { product_id: id })
 		}
-		this.setState({message: {id: id, message: result.data.message}, orderId: result.data.order_id})
+		this.setState({ message: { id: id, message: result.data.message }, orderDetails: result.data.order_details.order })
 	}
 
 	render() {
-		let dataIndex
+		let dataIndex, orderDetailsDisplay
 		if (Array.isArray(this.state.productData) && this.state.productData.length) {
 			dataIndex = (
 				<div id="index">
@@ -48,11 +49,27 @@ class DisplayProductData extends Component {
 				</div>
 			)
 		}
+		if (this.state.orderDetails.hasOwnProperty('products')) {
+			orderDetailsDisplay = this.state.orderDetails.products.map(item => {
+				return <li key={item.name}>{item.name}</li>
+			})
+		} else {
+			orderDetailsDisplay = 'Nothing to see'
+		}
+
 
 		return (
-			<div>
+			<>
+				{this.state.orderDetails.hasOwnProperty('products') &&
+					<button onClick={() => this.setState({ showOrder: !this.state.showOrder })}>View order</button>
+				}
+				{this.state.showOrder &&
+					<ul id="order-details">
+						{orderDetailsDisplay}
+					</ul>
+				}
 				{dataIndex}
-			</div>
+			</>
 		)
 	}
 }
