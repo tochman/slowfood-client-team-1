@@ -27,7 +27,7 @@ class DisplayProductData extends Component {
 		} else {
 			result = await axios.post('http://localhost:3000/api/orders', { product_id: id })
 		}
-		this.setState({ message: { id: id, message: result.data.message }, orderDetails: result.data.order_details.order })
+		this.setState({ message: { id: id, message: result.data.message }, orderDetails: result.data.order })
 	}
 
 	render() {
@@ -51,12 +51,9 @@ class DisplayProductData extends Component {
 		}
 		if (this.state.orderDetails.hasOwnProperty('products')) {
 			orderDetailsDisplay = this.state.orderDetails.products.map(item => {
-				return <li key={item.name}>{item.name}</li>
+				return <li key={item.name}>{`${item.amount} x ${item.name}`}</li>
 			})
-		} else {
-			orderDetailsDisplay = 'Nothing to see'
 		}
-
 
 		return (
 			<>
@@ -64,9 +61,12 @@ class DisplayProductData extends Component {
 					<button onClick={() => this.setState({ showOrder: !this.state.showOrder })}>View order</button>
 				}
 				{this.state.showOrder &&
-					<ul id="order-details">
-						{orderDetailsDisplay}
-					</ul>
+					<>
+						<ul id="order-details">
+							{orderDetailsDisplay}
+						</ul>
+						<p>To pay: {this.state.orderDetails.order_total}</p>
+					</>
 				}
 				{dataIndex}
 			</>
