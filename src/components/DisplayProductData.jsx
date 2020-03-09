@@ -22,12 +22,18 @@ class DisplayProductData extends Component {
 	async addToOrder(event) {
 		let id = event.target.parentElement.dataset.id
 		let result
+		debugger
 		if (this.state.orderDetails.hasOwnProperty('id')) {
 			result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderDetails.id}`, { product_id: id })
 		} else {
 			result = await axios.post('http://localhost:3000/api/orders', { product_id: id })
 		}
 		this.setState({ message: { id: id, message: result.data.message }, orderDetails: result.data.order })
+	}
+
+	async finalizeOrder() {
+		let result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderDetails.id}`, { action: 'finalize' })
+		this.setState({ message: { id: 0, message: result.data.message } })
 	}
 
 	render() {
@@ -57,6 +63,9 @@ class DisplayProductData extends Component {
 
 		return (
 			<>
+				{this.state.message.id === 0 &&
+					<h2 className='message'>{this.state.message.message}</h2>
+				}
 				{this.state.orderDetails.hasOwnProperty('products') &&
 					<button onClick={() => this.setState({ showOrder: !this.state.showOrder })}>View order</button>
 				}
@@ -66,6 +75,7 @@ class DisplayProductData extends Component {
 							{orderDetailsDisplay}
 						</ul>
 						<p>To pay: {this.state.orderDetails.order_total}</p>
+						<button onClick={this.finalizeOrder.bind(this)}>Confirm!</button>
 					</>
 				}
 				{dataIndex}
