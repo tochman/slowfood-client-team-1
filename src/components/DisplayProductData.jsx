@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { getData } from '../modules/productData';
+import PaymentForm from './PaymentForm'
+import {
+	Elements
+} from 'react-stripe-elements'
 import axios from 'axios'
 
 class DisplayProductData extends Component {
@@ -8,6 +12,7 @@ class DisplayProductData extends Component {
 		message: {},
 		orderDetails: {},
 		showOrder: false,
+		showPaymentForm: false,
 		orderTotal: ''
 	}
 
@@ -34,7 +39,7 @@ class DisplayProductData extends Component {
 	async finalizeOrder() {
 		let orderTotal = this.state.orderDetails.order_total
 		let result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderDetails.id}`, { activity: 'finalize' })
-		this.setState({ message: { id: 0, message: result.data.message }, orderTotal: orderTotal,   orderDetails: {}})
+		this.setState({ message: { id: 0, message: result.data.message }, orderTotal: orderTotal, orderDetails: {} })
 	}
 
 	render() {
@@ -76,10 +81,18 @@ class DisplayProductData extends Component {
 							{orderDetailsDisplay}
 						</ul>
 						<p>To pay: {this.state.orderDetails.order_total || this.state.orderTotal} kr</p>
-						<button onClick={this.finalizeOrder.bind(this)}>Confirm!</button>
+						<button onClick={() => this.setState({ showPaymentForm: true })}>Confirm!</button>
+						{this.state.showPaymentForm &&
+							<div id="payment-form">
+								<Elements>
+									<PaymentForm orderDetails={this.state.orderDetails}/>
+								</Elements>
+							</div>
+						}
 					</>
 				}
 				{dataIndex}
+
 			</>
 		)
 	}
