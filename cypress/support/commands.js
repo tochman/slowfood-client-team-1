@@ -25,7 +25,7 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 
-const COMMAND_DELAY = 50;
+const COMMAND_DELAY = 150;
 
 
 for (const command of ['get', 'visit', 'click', 'trigger', 'type', 'clear', 'reload', 'contains']) {

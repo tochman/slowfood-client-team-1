@@ -7,7 +7,8 @@ class DisplayProductData extends Component {
 		productData: [],
 		message: {},
 		orderDetails: {},
-		showOrder: false
+		showOrder: false,
+		orderTotal: ''
 	}
 
 	componentDidMount() {
@@ -22,8 +23,7 @@ class DisplayProductData extends Component {
 	async addToOrder(event) {
 		let id = event.target.parentElement.dataset.id
 		let result
-		debugger
-		if (this.state.orderDetails.hasOwnProperty('id')) {
+		if (this.state.orderDetails.hasOwnProperty('id') && this.state.orderDetails.finalized === false) {
 			result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderDetails.id}`, { product_id: id })
 		} else {
 			result = await axios.post('http://localhost:3000/api/orders', { product_id: id })
@@ -32,8 +32,9 @@ class DisplayProductData extends Component {
 	}
 
 	async finalizeOrder() {
-		let result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderDetails.id}`, { action: 'finalize' })
-		this.setState({ message: { id: 0, message: result.data.message } })
+		let orderTotal = this.state.orderDetails.order_total
+		let result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderDetails.id}`, { activity: 'finalize' })
+		this.setState({ message: { id: 0, message: result.data.message }, orderTotal: orderTotal,   orderDetails: {}})
 	}
 
 	render() {
@@ -44,7 +45,7 @@ class DisplayProductData extends Component {
 					{this.state.productData.map(item => {
 						return (
 							<div key={item.id} id={`product-${item.id}`} data-id={item.id} data-price={item.price}>
-								{`${item.name} ${item.description} ${item.price}`}
+								{`${item.name} ${item.description} - ${item.price}kr `}
 								<button onClick={this.addToOrder.bind(this)}>Add to order</button>
 								{parseInt(this.state.message.id) === item.id &&
 									<p className='message'>{this.state.message.message}</p>
@@ -74,7 +75,7 @@ class DisplayProductData extends Component {
 						<ul id="order-details">
 							{orderDetailsDisplay}
 						</ul>
-						<p>To pay: {this.state.orderDetails.order_total}</p>
+						<p>To pay: {this.state.orderDetails.order_total || this.state.orderTotal} kr</p>
 						<button onClick={this.finalizeOrder.bind(this)}>Confirm!</button>
 					</>
 				}
