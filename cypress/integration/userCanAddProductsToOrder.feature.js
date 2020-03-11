@@ -20,7 +20,6 @@ describe('User can add a product to his/her order', () => {
 		cy.route({
 			method: 'PUT',
 			url: 'http://localhost:3000/api/orders/1',
-			// response: { message: 'The product has been added to your order', order_id: 1 }
 			response: 'fixture:put_response.json'
 		})
 
@@ -28,22 +27,20 @@ describe('User can add a product to his/her order', () => {
 
 	});
 
-	xit('user can add multiple product to order and view its content', () => {
+	it('user can add multiple product to order and view its content', () => {
 		cy.get('button').contains('View order').should('not.exist')
 		cy.get('#product-2').within(() => {
 			cy.get('button').contains('Add to order').click()
 			cy.get('.message').should('contain', "The product has been added to your order")
 		})
-
-
 		cy.get('button').contains('View order').should('exist')
+		cy.get('button').contains('View order').click()
 
 		cy.get('#product-3').within(() => {
 			cy.get('button').contains('Add to order').click()
 			cy.get('.message').should('contain', "The product has been added to your order")
 		})
 
-		cy.get('button').contains('View order').click()
 
 		cy.get('#order-details').within(() => {
 			cy.get('li')

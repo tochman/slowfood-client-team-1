@@ -9,6 +9,7 @@
 				"price": 4.0
 			}
 		],
-		"order_total": 4.0
+		"order_total": 4.0,
+		"finalized": false
 	}
 }
