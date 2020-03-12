@@ -57,19 +57,19 @@ describe('User can add a product to his/her order', () => {
 			const $body = $iframe.contents().find("body");
 			cy.wrap($body)
 				.find('input[name="exp-date"]')
-				.type("1222", { delay: 50 });
+				.type("1222", { delay: 10 });
 		});
 		cy.get('iframe[name^="__privateStripeFrame7"]').then($iframe => {
 			const $body = $iframe.contents().find("body");
 			cy.wrap($body)
 				.find('input[name="cvc"]')
-				.type("999", { delay: 50 });
+				.type("999", { delay: 10 });
 		});
 
 		cy.get('button').contains('Submit').click()
 
-
-		// cy.get('.message').should('contain', "Your order will be ready in 30 minutes!")
+		cy.get('#payment-form').should('not.exist')
+		cy.get('.message').should('contain', "Your order will be ready in 30 minutes!")
 	});
 
 });

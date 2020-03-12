@@ -32,7 +32,7 @@ class PaymentForm extends Component {
 			}
 		)
 		if (orderResponse.data.paid === true) {
-			debugger
+			this.props.finalizeOrder(orderResponse.data.message)
 		} else {
 			debugger
 		}

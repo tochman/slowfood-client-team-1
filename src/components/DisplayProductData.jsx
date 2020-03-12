@@ -36,10 +36,9 @@ class DisplayProductData extends Component {
 		this.setState({ message: { id: id, message: result.data.message }, orderDetails: result.data.order })
 	}
 
-	async finalizeOrder() {
+	async finalizeOrder(message) {
 		let orderTotal = this.state.orderDetails.order_total
-		let result = await axios.put(`http://localhost:3000/api/orders/${this.state.orderDetails.id}`, { activity: 'finalize' })
-		this.setState({ message: { id: 0, message: result.data.message }, orderTotal: orderTotal, orderDetails: {} })
+		this.setState({ message: { id: 0, message: message }, orderTotal: orderTotal, orderDetails: {}, showPaymentForm: false })
 	}
 
 	render() {
@@ -85,7 +84,7 @@ class DisplayProductData extends Component {
 						{this.state.showPaymentForm &&
 							<div id="payment-form">
 								<Elements>
-									<PaymentForm orderDetails={this.state.orderDetails}/>
+									<PaymentForm orderDetails={this.state.orderDetails} finalizeOrder={this.finalizeOrder.bind(this)}/>
 								</Elements>
 							</div>
 						}
